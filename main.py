@@ -28,7 +28,7 @@ app.add_middleware(
 # GitHub API Configuration
 GITHUB_TOKEN = os.getenv("MY_GITHUB_TOKEN")
 REPO_OWNER = os.getenv("REPO_OWNER") 
-REPO_NAME = "qr-codes-repo"  
+REPO_NAME = "QR-Backend"  
 BRANCH_NAME = "main" 
 COMMITTER_NAME = "GitHub Actions"
 COMMITTER_EMAIL = "github-actions@github.com"
@@ -124,4 +124,4 @@ async def generate_qr(request: QRRequest):
         raise e
     except Exception as e:
         print(f"Unexpected error: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        raise HTTPException(status_code=500, detail="Internal Server")
