@@ -15,7 +15,8 @@ load_dotenv()
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000"
+    "https://mounamahfd.github.io/QR-Frontend/",
+    "http://localhost:3000",
 ]
 
 app.add_middleware(
@@ -124,4 +125,4 @@ async def generate_qr(request: QRRequest):
         raise e
     except Exception as e:
         print(f"Unexpected error: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
