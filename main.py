@@ -9,6 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import re
 from urllib.parse import urlparse
+from fastapi.responses import FileResponse
+import shutil
 
 load_dotenv()
 
@@ -16,7 +18,6 @@ app = FastAPI()
 
 origins = [
     "https://mounamahfd.github.io/QR-Frontend/",
-    "http://localhost:3000",
 ]
 
 app.add_middleware(
@@ -80,7 +81,6 @@ def upload_to_github(file_name, image_data):
 
     return f"https://{REPO_OWNER}.github.io/{REPO_NAME}/{file_name}"
 
-
 @app.post("/generate-qr/")
 async def generate_qr(request: QRRequest):
     print(f"Received URL: {request.url}")
@@ -112,13 +112,19 @@ async def generate_qr(request: QRRequest):
         img.save(img_byte_arr, format='PNG')
         img_byte_arr.seek(0)
 
-        # Convert image to base64
-        img_base64 = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
+        # Optionally, save the QR code temporarily to serve it faster (e.g., in a 'static' folder)
+        temp_file_path = f"static/{file_name}"
+        os.makedirs(os.path.dirname(temp_file_path), exist_ok=True)
+        
+        with open(temp_file_path, 'wb') as f:
+            f.write(img_byte_arr.read())
 
-        # Upload the image to GitHub
+        # Upload to GitHub asynchronously
+        img_base64 = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
         github_url = upload_to_github(file_name, img_base64)
 
-        return {"qr_code_url": github_url}
+        # Serve the file immediately from the local server
+        return {"qr_code_url": f"http://localhost:8000/static/{file_name}"}
 
     except HTTPException as e:
         print(f"HTTP Exception: {e.detail}")
@@ -126,3 +132,11 @@ async def generate_qr(request: QRRequest):
     except Exception as e:
         print(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+# Serve static files for quicker access (e.g., QR code images)
+@app.get("/static/{file_path:path}")
+async def serve_static_file(file_path: str):
+    file_path = os.path.join("static", file_path)
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    raise HTTPException(status_code=404, detail="File not found")
