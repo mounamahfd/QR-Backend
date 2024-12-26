@@ -16,18 +16,14 @@ load_dotenv()
 
 app = FastAPI()
 
-origins = [
-    "https://mounamahfd.github.io/QR-Frontend/",  # GitHub Pages base URL
-    "10.17.16.174",
-]
-
-
 app.add_middleware(
-    CORSMiddleware,  
-    allow_origins=origins,
+    CORSMiddleware,
+    allow_origins=["https://mounamahfd.github.io"],  # Adjust to the exact origin
     allow_methods=["*"],
     allow_headers=["*"],
+    # allow_credentials=True,  # Optional, for authentication
 )
+
 
 # GitHub API Configuration
 GITHUB_TOKEN = os.getenv("MY_GITHUB_TOKEN")
