@@ -17,8 +17,9 @@ load_dotenv()
 app = FastAPI()
 
 origins = [
-    "https://mounamahfd.github.io/QR-Frontend/",
+    "https://mounamahfd.github.io",  # GitHub Pages base URL
 ]
+
 
 app.add_middleware(
     CORSMiddleware,  
