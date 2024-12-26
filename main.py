@@ -16,12 +16,16 @@ load_dotenv()
 
 app = FastAPI()
 
+origins = [
+    "https://mounamahfd.github.io/QR-Frontend/",  
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://mounamahfd.github.io"],  # Adjust to the exact origin
+    allow_origins=origins,
     allow_methods=["*"],
     allow_headers=["*"],
-    # allow_credentials=True,  # Optional, for authentication
+    allow_credentials=True,  # If needed for authentication
 )
 
 
@@ -122,7 +126,7 @@ async def generate_qr(request: QRRequest):
         github_url = upload_to_github(file_name, img_base64)
 
         # Serve the file immediately from the local server
-        return {"qr_code_url": f"http://localhost:8000/static/{file_name}"}
+        return {"qr_code_url": f"https://qr-backend-2.onrender.com/static/{file_name}"}
 
     except HTTPException as e:
         print(f"HTTP Exception: {e.detail}")
