@@ -17,7 +17,8 @@ load_dotenv()
 app = FastAPI()
 
 origins = [
-    "https://mounamahfd.github.io",  # GitHub Pages base URL
+    "https://mounamahfd.github.io/QR-Frontend/",  # GitHub Pages base URL
+    "10.17.16.174",
 ]
 
 

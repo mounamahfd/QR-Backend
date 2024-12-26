@@ -1,21 +1,18 @@
-# Use official Python image as base
-FROM python:3.9-slim
+# Use a Python 3.10 base image
+FROM python:3.10-slim
 
-# Set environment variables
-ENV PYTHONUNBUFFERED 1
-
-# Create and set the working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy the requirements file and install dependencies
-COPY requirements.txt /app/
+# Copy requirements file
+COPY requirements.txt .
+
+# Upgrade pip and install dependencies
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the FastAPI app code into the container
-COPY . /app/
+# Copy project files
+COPY . .
 
-# Expose port 5000 for the FastAPI app
-EXPOSE 5000
-
-# Command to run the FastAPI app with Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
+# Command to run your application
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
