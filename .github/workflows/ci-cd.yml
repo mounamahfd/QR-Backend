@@ -33,7 +33,7 @@ jobs:
       # Étape 4 : Exécuter les tests
       - name: Run tests
         run: |
-          pytest main_test.py --maxfail=1 --disable-warnings -q  # Spécifiez le fichier de test
+          pytest test_main.py --maxfail=1 --disable-warnings -q  # Spécifiez le fichier de test
 
       # Étape 5 : Construire l'application (si les tests passent)
       - name: Run the application
