@@ -47,7 +47,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set environment variables directly
+      - name: Set environment variables
         run: |
           echo "REPO_OWNER=mounamahfd" >> $GITHUB_ENV
           echo "REPO_NAME=QR-Backend" >> $GITHUB_ENV
@@ -57,6 +57,7 @@ jobs:
         run: |
           echo "REPO_OWNER=$REPO_OWNER"
           echo "REPO_NAME=$REPO_NAME"
+          echo "MY_GITHUB_TOKEN=$MY_GITHUB_TOKEN"
 
       - name: Upload QR codes to GitHub
         run: |
