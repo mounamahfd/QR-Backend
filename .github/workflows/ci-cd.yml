@@ -50,9 +50,12 @@ jobs:
       - name: Load .env file
         run: |
           echo "Loading .env file..."
-          set -a
-          source .env
-          set +a
+          export $(grep -v '^#' .env | xargs)
+
+      - name: Debug loaded environment variables
+        run: |
+          echo "REPO_OWNER: $REPO_OWNER"
+          echo "REPO_NAME: $REPO_NAME"
 
       - name: Upload QR codes to GitHub
         run: |
