@@ -13,36 +13,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Étape 1 : Récupérer le code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Load .env file
-        run: |
-          echo "Loading .env file..."
-          set -a
-          source .env
-          set +a
+      # Étape 2 : Configurer Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13.1
 
-      - name: Print debug information (Check environment variables)
-        run: |
-          echo "REPO_OWNER is: $REPO_OWNER"
-          echo "REPO_NAME is: $REPO_NAME"
-          echo "MY_GITHUB_TOKEN is: $MY_GITHUB_TOKEN"
-
+      # Étape 3 : Installer les dépendances
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
 
+      # Étape 4 : Exécuter les tests
       - name: Run tests
         run: |
-          pytest test_main.py --maxfail=1 --disable-warnings -q
+          pytest test_main.py --maxfail=1 --disable-warnings -q  # Spécifiez le fichier de test
 
+      # Étape 5 : Construire l'application (si les tests passent)
       - name: Run the application
         run: |
-          uvicorn main:app --reload & sleep 10
+          uvicorn main:app --reload & sleep 10  # Lancer temporairement pour valider
 
+      # Étape 6 : Vérifier les QR Codes générés
       - name: Check generated QR codes
         run: |
           ls -l qr_codes/
@@ -52,34 +50,17 @@ jobs:
     needs: test-and-build
 
     steps:
+      # Étape 1 : Récupérer le code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Load .env file
-        run: |
-          echo "Loading .env file..."
-          set -a
-          source .env
-          set +a
-
-      - name: Print debug information (Check environment variables)
-        run: |
-          echo "REPO_OWNER is: $REPO_OWNER"
-          echo "REPO_NAME is: $REPO_NAME"
-          echo "MY_GITHUB_TOKEN is: $MY_GITHUB_TOKEN"
-
+      # Étape 2 : Télécharger les QR codes sur GitHub
       - name: Upload QR codes to GitHub
         run: |
           echo "Deploying QR codes..."
-          for qr_code in qr_codes/*.png; do
-            file_name=$(basename "$qr_code")
-            base64_image=$(base64 "$qr_code" | tr -d '\n')
-            curl -X PUT \
-              -H "Authorization: token $MY_GITHUB_TOKEN" \
-              -d "{\"message\":\"Add QR code for $file_name\",\"content\":\"$base64_image\",\"branch\":\"main\"}" \
-              "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/qr_codes/$file_name"
-          done
-
-      - name: Verify upload status
-        run: |
-          echo "QR Codes uploaded successfully."
+          # Exemple : Télécharger les images des QR codes sur GitHub.
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          REPO_OWNER: ${{ secrets.REPO_OWNER }}
+          REPO_NAME: QR-Backend
+          BRANCH_NAME: main
