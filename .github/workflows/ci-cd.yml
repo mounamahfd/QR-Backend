@@ -56,7 +56,7 @@ jobs:
             curl -X PUT \
               -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" \
               -d "{\"message\":\"Add QR code for $file_name\",\"content\":\"$base64_image\",\"branch\":\"main\"}" \
-              "https://api.github.com/repos/${{ secrets.REPO_OWNER }}/QR-Backend/contents/qr_codes/$file_name"
+              "https://api.github.com/repos/mounamahfd/QR-Backend/contents/qr_codes/$file_name"
           done
 
       - name: Verify upload status
