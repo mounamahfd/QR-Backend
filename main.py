@@ -96,7 +96,7 @@ async def generate_qr(request: QRRequest):
 
         # Check if the file already exists in the GitHub repository
         if check_if_file_exists(file_name):
-            return {"message": "QR code for this URL already exists.", "qr_code_url": f"https://{REPO_OWNER}.github.io/{REPO_NAME}/{file_name}"}
+            return {"message": "QR code for this URL already exists..", "qr_code_url": f"https://{REPO_OWNER}.github.io/{REPO_NAME}/{file_name}"}
 
         qr = qrcode.QRCode(
             version=1,
