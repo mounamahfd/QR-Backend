@@ -58,12 +58,7 @@ jobs:
       - name: Upload QR codes to GitHub
         run: |
           echo "Deploying QR codes..."
-          for file in qr_codes/*.png; do
-          file_content=$(base64 -w 0 "$file")  # Encode the file content to base64
-          curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
-            -d "{\"message\": \"Add QR code image for $file\", \"content\": \"$file_content\", \"branch\": \"$BRANCH_NAME\", \"path\": \"qr_codes/$(basename $file)\"}" \
-            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/qr_codes/$(basename $file)"
-          done
+          # Exemple : Télécharger les images des QR codes sur GitHub.
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           REPO_OWNER: ${{ secrets.REPO_OWNER }}
