@@ -47,6 +47,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Load .env file
+        run: |
+          echo "Loading .env file..."
+          set -a
+          source .env
+          set +a
+
+      - name: Upload QR codes to GitHub
+        run: |
+          echo "Deploying QR codes..."
+          for qr_code in qr_codes/*.png; do
+            file_name=$(basename "$qr_code")
+            base64_image=$(base64 "$qr_code" | tr -d '\n')
+            curl -X PUT \
+              -H "Authorization: token $MY_GITHUB_TOKEN" \
+              -d "{\"message\":\"Add QR code for $file_name\",\"content\":\"$base64_image\",\"branch\":\"main\"}" \
+              "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/qr_codes/$file_name"
+          done
+
       - name: Verify upload status
         run: |
           echo "QR Codes uploaded successfully."
