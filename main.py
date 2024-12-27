@@ -78,7 +78,7 @@ def upload_to_github(file_name, image_data):
     print(f"GitHub API response: {response.status_code} - {response.text}")
 
     if response.status_code != 200 and response.status_code != 201:
-        raise Exception(f"Error uploading file to GitHub: {response.text}")
+        raise Exception(f"Error uploading filee to GitHub: {response.text}")
 
     return f"https://{REPO_OWNER}.github.io/{REPO_NAME}/{file_name}"
 
