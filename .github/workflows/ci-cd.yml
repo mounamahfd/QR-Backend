@@ -47,20 +47,38 @@ jobs:
 
   upload-qr-code:
     runs-on: ubuntu-latest
-    needs: test-and-build
+    needs: test-and-build # This job will run only after the test-and-build job completes
 
     steps:
       # Étape 1 : Récupérer le code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Étape 2 : Télécharger les QR codes sur GitHub
+      # Étape 2 : Set up GitHub token (this is necessary for uploading the files to GitHub)
+      - name: Set up GitHub Token
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.MY_GITHUB_TOKEN }}" >> $GITHUB_ENV
+
+      # Étape 3 : Uploader les QR codes sur GitHub
       - name: Upload QR codes to GitHub
         run: |
           echo "Deploying QR codes..."
-          # Exemple : Télécharger les images des QR codes sur GitHub.
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-          REPO_OWNER: ${{ secrets.REPO_OWNER }}
-          REPO_NAME: QR-Backend
-          BRANCH_NAME: main
+
+          # Loop through all QR code images in the `qr_codes/` directory
+          for qr_code in qr_codes/*.png; do
+            file_name=$(basename "$qr_code")
+            base64_image=$(base64 "$qr_code" | tr -d '\n')
+            
+            # GitHub API request to upload the QR code to the repository
+            curl -X PUT \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -d "{\"message\":\"Add QR code for $file_name\",\"content\":\"$base64_image\",\"branch\":\"main\"}" \
+              "https://api.github.com/repos/${{ secrets.REPO_OWNER }}/QR-Backend/contents/qr_codes/$file_name"
+          done
+
+      # Optionally, you can print the status of the uploaded QR codes
+      - name: Verify upload status
+        run: |
+          echo "QR Codes uploaded successfully."
