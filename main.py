@@ -67,7 +67,7 @@ def upload_to_github(file_name, image_data):
     headers = {"Authorization": f"token {GITHUB_TOKEN}"}
 
     commit_data = {
-        "message": f"Add QR code for {file_name}",
+        "message": f"Add QR code for : {file_name}",
         "content": image_data,
         "branch": BRANCH_NAME,
     }
