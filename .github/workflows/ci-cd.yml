@@ -47,15 +47,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Load .env file
+      - name: Set environment variables directly
         run: |
-          echo "Loading .env file..."
-          export $(grep -v '^#' .env | xargs)
+          echo "REPO_OWNER=mounamahfd" >> $GITHUB_ENV
+          echo "REPO_NAME=QR-Backend" >> $GITHUB_ENV
+          echo "MY_GITHUB_TOKEN=${{ secrets.MY_GITHUB_TOKEN }}" >> $GITHUB_ENV
 
-      - name: Debug loaded environment variables
+      - name: Verify environment variables
         run: |
-          echo "REPO_OWNER: $REPO_OWNER"
-          echo "REPO_NAME: $REPO_NAME"
+          echo "REPO_OWNER=$REPO_OWNER"
+          echo "REPO_NAME=$REPO_NAME"
 
       - name: Upload QR codes to GitHub
         run: |
@@ -63,7 +64,8 @@ jobs:
           for qr_code in qr_codes/*.png; do
             file_name=$(basename "$qr_code")
             base64_image=$(base64 "$qr_code" | tr -d '\n')
-            curl -X PUT \
+            echo "Uploading $file_name..."
+            curl -v -X PUT \
               -H "Authorization: token $MY_GITHUB_TOKEN" \
               -d "{\"message\":\"Add QR code for $file_name\",\"content\":\"$base64_image\",\"branch\":\"main\"}" \
               "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/contents/qr_codes/$file_name"
