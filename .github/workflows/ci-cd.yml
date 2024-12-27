@@ -61,6 +61,6 @@ jobs:
           # Exemple : Télécharger les images des QR codes sur GitHub.
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_OWNER: ${{ secrets.REPO_OWNER }}
           REPO_NAME: QR-Backend
           BRANCH_NAME: main
