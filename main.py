@@ -17,16 +17,15 @@ load_dotenv()
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000",
+    "http://localhost:3000",  
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  
+    allow_headers=["*"], 
 )
-
 
 # GitHub API Configuration
 GITHUB_TOKEN = os.getenv("MY_GITHUB_TOKEN")
